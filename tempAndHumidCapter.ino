@@ -33,9 +33,10 @@ void setup() {
 }
 
 void loop() {
-  
+  Serial.print("yoo");
+  Serial.println(millis());
   // frequence de meure du capteur est de 1 seconde 
-  delay(1000);
+ delay(250);
   
 
   
