@@ -16,10 +16,18 @@ float tab[10];
   int i = 0 ;
   int j;
   float moyTemp = 0;
+  bool full = false ;
+  float av1 = 0;
+  float av2 = 0;
 
 void setup() {
   Serial.begin(9600);
   Serial.println("DHTxx test!");
+  pinMode(D1, OUTPUT);
+  pinMode(D2, OUTPUT);
+  digitalWrite(D1, LOW);
+  digitalWrite(D2, LOW);
+  digitalWrite(D3, LOW);
   
   dht.begin();
 }
@@ -28,6 +36,7 @@ void loop() {
   
   // frequence de meure du capteur est de 1 seconde 
   delay(1000);
+  
 
   
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
@@ -39,16 +48,43 @@ void loop() {
   
     tab[i] = t;
  
-  if (i == 10) {
+  if (i == 9 ) {
     for(j = 0;j<=9;j++){
       moyTemp += tab[j];
     }
     moyTemp /= 10;
+  
+    
     Serial.print(moyTemp);
+    if( av1!=0){
+      av2 = moyTemp;
+      if (av1<av2){
+        digitalWrite(D1, HIGH);
+        digitalWrite(D2, LOW);
+        digitalWrite(D3, LOW);
+      }else if(av1>av2){
+        digitalWrite(D2, HIGH);
+        digitalWrite(D1, LOW);
+        digitalWrite(D3, LOW);
+      }else if(av1 == av2){
+        digitalWrite(D2, LOW);
+        digitalWrite(D1, LOW);
+        digitalWrite(D3, HIGH);
+      }
+      av1=av2;
+      
+    }else{
+      av1 = moyTemp;
+    }
+    
     Serial.print("\t");
     moyTemp = 0;
     i = -1;
   }
+
+  Serial.println(av1);
+  Serial.println(av2);
+    
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(h) || isnan(t) || isnan(f)) {
